@@ -164,11 +164,27 @@ def main():
         s7 = os.path.join(TMP_DIR, "a7_space.png")
         page.screenshot(path=s7)
 
-        # Shot 8: Couch Tic-Tac-Toe Finale (App 9)
-        page.evaluate("() => { window.__GAME__.goApp(9); window.__GAME__.playTtt(0); window.__GAME__.playTtt(2); }")
+        # Shot 8: Couch Tic-Tac-Toe Finale (App 9) + verify JJ can win cleanly in browser
+        page.evaluate("""() => {
+            window.__GAME__.goApp(9);
+            window.__GAME__.playTtt(0);
+            window.__GAME__.playTtt(2);
+        }""")
         page.wait_for_timeout(150)
         s8 = os.path.join(TMP_DIR, "a8_ttt.png")
         page.screenshot(path=s8)
+
+        # Play deterministic test round proving JJ can win and increment jjWins!
+        jj_won = page.evaluate("""() => {
+            const st = window.__GAME__.getState();
+            st.ttt.board = ['X','X',null, 'O',null,null, null,null,'O'];
+            st.ttt.winner = null;
+            st.ttt.winLine = null;
+            window.__GAME__.playTtt(2);
+            return st.ttt.winner === 'X' && st.ttt.jjWins >= 1;
+        }""")
+        assert jj_won is True, "JJ (X) win detection failed in browser E2E!"
+        print("[PASS] Couch Tic-Tac-Toe browser win check passed (JJ can win cleanly!)")
 
         ctx.close()
         browser.close()

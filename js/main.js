@@ -82,6 +82,7 @@ const sim = {
 };
 
 let pointerDown = false;
+let lastPointerLocalX = 444;
 let activeStroke = null;
 const keys = new Set();
 
@@ -245,6 +246,7 @@ canvas.addEventListener("pointerdown", (e) => {
   e.preventDefault();
   pointerDown = true;
   const pt = toCanvasXY(e);
+  lastPointerLocalX = pt.x - S.x;
   handleCanvasDown(pt.x, pt.y);
 });
 
@@ -252,6 +254,7 @@ canvas.addEventListener("pointermove", (e) => {
   const pt = toCanvasXY(e);
   const lx = pt.x - S.x;
   const ly = pt.y - S.y;
+  lastPointerLocalX = lx;
   const app = getAppDef(state.currentAppIndex);
 
   if (app.id === "snake" && lx >= 20 && lx <= S.w - 20 && ly >= 20 && ly <= S.h - 20) {
@@ -319,6 +322,9 @@ function stepSimulations() {
     let mx = 0;
     if (keys.has("d") || keys.has("arrowright")) mx = 1;
     if (keys.has("a") || keys.has("arrowleft")) mx = -1;
+    if (pointerDown && lastPointerLocalX < S.w * 0.55) {
+      mx = lastPointerLocalX > 130 ? 1 : -1;
+    }
     if (mx !== 0 || !state.roblox.onGround || keys.has(" ")) {
       stepRobloxObby(state, { moveX: mx, jump: keys.has(" ") });
     }

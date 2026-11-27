@@ -198,7 +198,23 @@ export function placeBlock(state, trayIdx, row, col) {
   // Replace placed tray shape cyclically
   const nextShape = BLOCK_SHAPES[(b.score + trayIdx + 1) % BLOCK_SHAPES.length];
   b.tray[trayIdx] = nextShape;
+  // Prevent permanent soft-lock if no tray piece fits anywhere on the 8x8 board
+  if (!hasAnyValidBlockMove(b.grid, b.tray)) {
+    b.grid = emptyGrid(8);
+  }
   return { placed: true, cleared };
+}
+
+export function hasAnyValidBlockMove(grid, tray) {
+  for (const shape of tray) {
+    if (!shape) continue;
+    for (let r = 0; r < 8; r++) {
+      for (let c = 0; c < 8; c++) {
+        if (canPlaceBlock(grid, shape, r, c)) return true;
+      }
+    }
+  }
+  return false;
 }
 
 // 3. Camera / FaceTime Mikey Wallpaper Snap
@@ -290,7 +306,7 @@ export function destroyUfo(state, points = 25) {
 }
 
 // 10. Couch Tic-Tac-Toe Finale (JJ = X vs Mikey = O)
-const WIN_LINES = [
+export const WIN_LINES = [
   [0,1,2], [3,4,5], [6,7,8],
   [0,3,6], [1,4,7], [2,5,8],
   [0,4,8], [2,4,6],
@@ -309,7 +325,7 @@ export function checkTttWinner(board) {
   return { winner: null, line: null };
 }
 
-export function playTttCell(state, cellIndex) {
+export function playTttCell(state, cellIndex, rng = Math.random) {
   const t = state.ttt;
   if (cellIndex < 0 || cellIndex > 8) return { moved: false };
   if (t.winner || t.board[cellIndex] !== null) return { moved: false };
@@ -324,8 +340,8 @@ export function playTttCell(state, cellIndex) {
     return { moved: true, winner: t.winner };
   }
 
-  // Mikey ("O") responds immediately: take center, winning move, block, or first open cell
-  const aiMove = pickMikeyMove(t.board);
+  // Playful, kid-friendly Mikey ("O") AI — fun & beatable, never unbeatable!
+  const aiMove = pickMikeyMove(t.board, rng);
   if (aiMove >= 0) {
     t.board[aiMove] = "O";
     res = checkTttWinner(t.board);
@@ -338,21 +354,33 @@ export function playTttCell(state, cellIndex) {
   return { moved: true, aiMove, winner: t.winner };
 }
 
-function pickMikeyMove(board) {
-  // Check winning move for O, then block X, then center, then corners/edges
-  for (const sym of ["O", "X"]) {
+export function pickMikeyMove(board, rng = Math.random) {
+  const open = [];
+  for (let i = 0; i < 9; i++) {
+    if (board[i] === null) open.push(i);
+  }
+  if (!open.length) return -1;
+
+  // Classic goofy Mikey: sometimes spots a win (~45%) or blocks JJ (~28%), otherwise picks a fun open spot!
+  const findTwoInARow = (sym) => {
     for (const [a, b, c] of WIN_LINES) {
       const vals = [board[a], board[b], board[c]];
       if (vals.filter((v) => v === sym).length === 2 && vals.includes(null)) {
         return [a, b, c][vals.indexOf(null)];
       }
     }
-  }
-  if (board[4] === null) return 4;
-  for (const idx of [0, 2, 6, 8, 1, 3, 5, 7]) {
-    if (board[idx] === null) return idx;
-  }
-  return -1;
+    return -1;
+  };
+
+  const winCell = findTwoInARow("O");
+  if (winCell >= 0 && rng() < 0.45) return winCell;
+
+  const blockCell = findTwoInARow("X");
+  if (blockCell >= 0 && rng() < 0.28) return blockCell;
+
+  // Prefer varied open cells (never always hogging center + corners!)
+  const pick = Math.floor(rng() * open.length);
+  return open[Math.max(0, Math.min(open.length - 1, pick))];
 }
 
 export function resetTttBoard(state) {
