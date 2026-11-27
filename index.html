@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <title>Maizen: Roblox INSIDE Roblox iPad Simulator</title>
+  <meta name="description" content="JJ & Mikey's interactive Roblox-inside-Roblox iPad Simulator with 10 playable mini-games reproducing youtu.be/Do9uo62h_d8." />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <main id="app" aria-label="Maizen Roblox INSIDE Roblox iPad Simulator">
+    <!-- Compact frosted floating top icon pill (critters-coloring-game standard) -->
+    <header id="top-pill" class="floating-pill" role="toolbar" aria-label="iPad studio controls">
+      <button id="btn-prev" class="icon-btn" type="button" aria-label="Previous app" title="Previous">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+
+      <button id="btn-progress" class="progress-capsule" type="button" aria-label="Open iPad Home" title="iPad Home">
+        <span id="app-dot" class="app-dot" aria-hidden="true"></span>
+        <span id="app-counter" class="app-counter">1/10</span>
+        <span class="progress-track" aria-hidden="true"><span id="progress-fill" class="progress-fill"></span></span>
+      </button>
+
+      <button id="btn-next" class="icon-btn" type="button" aria-label="Next app" title="Next">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+
+      <button id="btn-gallery" class="icon-btn" type="button" aria-label="All iPad apps" title="All Apps">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.8"/><rect x="14" y="3" width="7" height="7" rx="1.8"/><rect x="3" y="14" width="7" height="7" rx="1.8"/><rect x="14" y="14" width="7" height="7" rx="1.8"/></svg>
+      </button>
+
+      <button id="btn-sound" class="icon-btn" type="button" aria-label="Toggle sound" aria-pressed="true" title="Sound">
+        <svg id="icon-sound-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.8 5.2a9.5 9.5 0 0 1 0 13.6"/></svg>
+        <svg id="icon-sound-off" class="hidden" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+      </button>
+
+      <button id="btn-reset" class="icon-btn reset-btn" type="button" aria-label="Reset iPad progress" title="Reset">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+      </button>
+    </header>
+
+    <!-- Full-bleed sunny Roblox baseplate + held glossy iPad stage -->
+    <section id="stage-wrap" aria-label="JJ and Mikey Roblox iPad">
+      <div id="canvas-frame">
+        <canvas id="ipad-canvas" width="1280" height="720"></canvas>
+      </div>
+    </section>
+
+    <!-- Compact frosted floating bottom icon-only app dock -->
+    <nav id="tool-pill" class="floating-pill" aria-label="iPad app dock"></nav>
+
+    <!-- Pure visual iPad App Grid overlay -->
+    <div id="gallery-overlay" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-label="iPad Apps">
+      <div class="gallery-card">
+        <div class="gallery-head">
+          <div class="gallery-dots" aria-hidden="true">
+            <span class="dot-red"></span>
+            <span class="dot-green"></span>
+            <span class="dot-blue"></span>
+          </div>
+          <button id="btn-gallery-close" class="icon-btn" type="button" aria-label="Close app grid">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div id="gallery-grid" class="gallery-grid"></div>
+      </div>
+    </div>
+
+    <!-- Centered dimmed-backdrop confirmation modal for destructive reset (game-ux-design-rules) -->
+    <div id="reset-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="reset-modal-title">
+      <div class="confirm-modal-card">
+        <div class="confirm-modal-icon" aria-hidden="true">↺</div>
+        <p id="reset-modal-title" class="confirm-modal-text">Do you really want to reset ↺ all iPad scores &amp; drawings?</p>
+        <div class="confirm-modal-actions">
+          <button id="btn-reset-no" class="modal-btn cancel" type="button">Cancel</button>
+          <button id="btn-reset-yes" class="modal-btn danger" type="button">Reset</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
